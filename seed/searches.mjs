@@ -62,7 +62,7 @@ const FEATURES = item => [
 const fb = (q, max) => ({ label: q, url: `https://www.facebook.com/marketplace/${PLACE.facebook}/search?query=${encodeURIComponent(q)}&maxPrice=${max}&sortBy=creation_time_descend&exact=false` });
 // Same search, any seller in the US who ships (Marketplace's "Shipping" delivery filter).
 const fbShip = (q, max) => ({ label: `${q} (ships, US)`, url: `https://www.facebook.com/marketplace/${PLACE.facebook}/search?query=${encodeURIComponent(q)}&maxPrice=${max}&deliveryMethod=shipping&sortBy=creation_time_descend&exact=false` });
-const cl = (q, max) => ({ label: q, url: `https://${PLACE.craigslist}.craigslist.org/search/fua?query=${encodeURIComponent(q)}&max_price=${max}` });
+const cl = (q, max, cat = "fua") => ({ label: q, url: `https://${PLACE.craigslist}.craigslist.org/search/${cat}?query=${encodeURIComponent(q)}&max_price=${max}` });
 
 // For an item's `wide` queries (a specific piece worth shipping or a long
 // drive), Craigslist is searched around these metros, 250 mi each.
@@ -89,7 +89,7 @@ Check: solid wood, not veneer over particleboard (ask or look at the edges); all
     features: [{ label: "Roseland", points: 5 }, { label: "Headboard", points: 3 }, { label: "Solid hardwood", points: 3 }, { label: "Walnut", points: 1 }, { label: "All hardware included", points: 1 }],
   },
   {
-    id: "standing-desk", name: "Standing desk", budget: "$400–$1,200 [confirm]", max: 1500,
+    id: "standing-desk", name: "Standing desk", state: "Archived",   // retired: no tab, no crawl budget: "$400–$1,200 [confirm]", max: 1500,
     lookingFor: "An electric sit-stand desk with a solid hardwood or marble top, steady at standing height.",
     criteria: `${QUALITY}
 
@@ -101,7 +101,7 @@ Check: no wobble at full height, motors quiet and even, control box and presets 
     features: [{ label: "Hardwood top", points: 3 }, { label: "Marble top", points: 3 }, { label: "Dual motor", points: 2 }],
   },
   {
-    id: "desk-chair", name: "Desk chair", budget: "$300–$1,500 [confirm]", max: 1800,
+    id: "desk-chair", name: "Desk chair", state: "Archived",   // retired: no tab, no crawl budget: "$300–$1,500 [confirm]", max: 1800,
     lookingFor: "A design-led chair that works all day at the desk and looks right in the living room for reading or lounging.",
     criteria: `${QUALITY}
 
@@ -132,18 +132,33 @@ Check: mechanism opens and closes smoothly, mattress included and clean, frame d
     features: [{ label: "Queen mattress", points: 3 }, { label: "No bar in back", points: 3 }, { label: "Tobacco/camel leather", points: 3 }, { label: "Deep sink-in seat", points: 2 }],
     fbQueries: ["american leather comfort sleeper", "rh maxwell sleeper", "leather sleeper sofa", "cognac leather sleeper", "crate and barrel sleeper", "interior define sleeper", "west elm shelter sleeper"],
   },
+  {
+    // Provisional: the Mac's marketplace search sends its own criteria for
+    // this search (searches/<rug>/criteria.md); replace this with that text.
+    id: "apartment-rug", name: "Rug", budget: "$200–$1,500 [confirm]", max: 2000, category: "hsa",
+    lookingFor: "A beautiful, well-made rug for the apartment: natural fibers, character, the right size for the room.",
+    criteria: `${QUALITY}
+
+Must have: wool, silk or another natural fiber; hand-knotted or hand-woven beats machine-made; size [confirm: 8x10 / 9x12 / runner] for [confirm: room].
+Prefer: vintage or antique Persian, Turkish (Oushak), Moroccan (Beni Ourain, Boucherouite), Tibetan, kilims and flatweaves; good modern makers (Armadillo, Nordic Knots, Beni, Lawrence of La Brea, Meharaj, Woven Concepts).
+Colors: warm, muted, tasteful with a little character (to sit with tobacco / camel leather); no stark white, black or saturated synthetic colors.
+Hard no: synthetic (polyester, polypropylene, viscose / "art silk"), printed or tufted-and-glued, pet stains or odor, moth damage, heavy wear or holes.
+Check: back of the rug (knots visible = hand-knotted), fringe and edges, flatness, any odor; ask for exact dimensions.`,
+    queries: ["wool rug", "vintage rug", "persian rug", "oushak rug", "moroccan rug", "kilim"],
+    features: [{ label: "Hand-knotted", points: 3 }, { label: "Vintage / antique", points: 2 }, { label: "Right size", points: 3 }],
+  },
 ];
 
 export const snapshot = {
   searches: ITEMS.map(it => ({
     id: it.id, name: it.name, lookingFor: it.lookingFor, budget: it.budget, area: `${PLACE.city}; pickup from ${HOME}`, timing: "Next 1–2 months [confirm]",
-    state: "Active", criteria: it.criteria, contactTemplate: CONTACT, statuses: STATUSES, metrics: METRICS, features: FEATURES(it.features),
+    state: it.state || "Active", criteria: it.criteria, contactTemplate: CONTACT, statuses: STATUSES, metrics: METRICS, features: FEATURES(it.features),
     collection: PLACE.city, home: PLACE.home,
   })),
   sources: ITEMS.flatMap(it => [
     { id: `${it.id}-craigslist`, searchIds: [it.id], name: "Craigslist", access: "Automatic (daily)", crawler: "craigslist",
-      method: "Craigslist search API, furniture category", links: it.queries.slice(0, 3).map(q => cl(q, it.max)),
-      config: { area: PLACE.craigslist, category: "fua", maxPrice: it.max, searches: [
+      method: "Craigslist search API", links: it.queries.slice(0, 3).map(q => cl(q, it.max, it.category)),
+      config: { area: PLACE.craigslist, category: it.category || "fua", maxPrice: it.max, searches: [
         ...it.queries.map(query => ({ query })),
         ...(it.wide || []).flatMap(query => HUBS.map(postal => ({ query, postal, radius: 250 }))),
       ] } },
