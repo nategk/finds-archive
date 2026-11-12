@@ -62,7 +62,8 @@ test("build brands the engine's app", () => {
 });
 
 test("seed: every search has a Sold status, the shared metrics and its three sources", () => {
-  assert.deepEqual(snapshot.searches.map(s => s.id), ["bed-frame", "standing-desk", "desk-chair", "sleeper-sofa"], "priority order");
+  assert.deepEqual(snapshot.searches.map(s => s.id), ["bed-frame", "standing-desk", "desk-chair", "sleeper-sofa", "apartment-rug"], "priority order");
+  assert.deepEqual(snapshot.searches.filter(s => s.state === "Archived").map(s => s.id), ["standing-desk", "desk-chair"], "retired");
   for (const s of snapshot.searches) {
     assert.ok(s.statuses.some(x => x.label === "Sold" && x.group === "archived"), s.id);
     assert.deepEqual(s.metrics.map(m => m.field), ["Model", "Condition", "% of retail", "Product page"]);
@@ -71,7 +72,7 @@ test("seed: every search has a Sold status, the shared metrics and its three sou
     const src = snapshot.sources.filter(x => x.searchIds[0] === s.id);
     assert.deepEqual(src.map(x => x.name), ["Craigslist", "Facebook Marketplace", "Curated resale"]);
     assert.equal(src[0].crawler, "craigslist");
-    assert.equal(src[0].config.category, "fua");
+    assert.equal(src[0].config.category, s.id === "apartment-rug" ? "hsa" : "fua");
   }
   assert.equal(new Set(snapshot.sources.map(s => s.id)).size, snapshot.sources.length);
 });
