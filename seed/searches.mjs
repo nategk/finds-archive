@@ -115,15 +115,22 @@ Check: gas cylinder holds height, tilt works, cushions not cracked or flattened,
   },
   {
     id: "sleeper-sofa", name: "Pull-out couch", budget: "$800–$3,000 [confirm]", max: 3500,
-    lookingFor: "A comfortable sofa that matches the desk chair's design vibe and pulls out to a real queen bed.",
+    lookingFor: "A deep, sink-in queen sleeper from a designer or quality maker that opens to one continuous real mattress, ideally a no-bar platform; the dream is tobacco / camel / cognac soft leather.",
     criteria: `${QUALITY}
 
-Must have: pulls out to a queen, a real mattress (memory foam or innerspring, not a thin pad), no bar across the sleeper's back, comfortable as an everyday sofa. Same design language as the chair: mid-century or modern, clean lines, good fabric or leather, no puffy overstuffed shapes.
-Top tier (e.g.): American Leather Comfort Sleeper (the benchmark), Room & Board sleepers, Design Within Reach, Interior Define, Joybird, Blu Dot, EQ3, Burrow, Article (only if like new).
-Must fit up my stairs and through a [confirm]" door. Delivery or moving help counts for a lot: this is a van pickup, not a bike one.
+Looking for: a deep, sink-in queen sleeper from a designer or quality maker that opens to ONE continuous real mattress, ideally a no-bar platform mechanism (American Leather Comfort Sleeper / Tiffany 24/7: RH Maxwell or Lancaster, American Leather Rogue, Room & Board Berin Day & Night). The dream is soft leather in tobacco, camel or cognac; references: Article Timber in Charme Tan, Poly & Bark Girona in cognac.
+Hard rules (score 0 if broken):
+- Queen.
+- One continuous mattress: no Luonto-style sections, sectioned or fold-down surfaces, no click-clack futons.
+- Size: width about 78–100"; closed depth no more than ~44"; open depth no more than ~96". L-sectionals are too big.
+- No heavy wear.
+Colors: no stark white, black, dark chocolate or saturated colors. Plain light grey is only "mid": he wants tasteful with a little character. No nailhead trim.
+Known good: West Elm Shelter (he owns one; it's the comfort benchmark).
+Must fit up the stairs; delivery or moving help counts for a lot (a van pickup, not a bike one).
 Check: mechanism opens and closes smoothly, mattress included and clean, frame doesn't rack, cushions not flattened, no stains, rips or odor.`,
     queries: ["queen sleeper sofa", "comfort sleeper", "american leather sleeper", "room and board sleeper", "mid century sleeper sofa", "sofa bed queen", "pull out couch queen"],
-    features: [{ label: "Queen mattress", points: 3 }, { label: "No bar in back", points: 3 }],
+    features: [{ label: "Queen mattress", points: 3 }, { label: "No bar in back", points: 3 }, { label: "Tobacco/camel leather", points: 3 }, { label: "Deep sink-in seat", points: 2 }],
+    fbQueries: ["american leather comfort sleeper", "rh maxwell sleeper", "leather sleeper sofa", "cognac leather sleeper", "crate and barrel sleeper", "interior define sleeper", "west elm shelter sleeper"],
   },
 ];
 
@@ -141,7 +148,7 @@ export const snapshot = {
         ...(it.wide || []).flatMap(query => HUBS.map(postal => ({ query, postal, radius: 250 }))),
       ] } },
     { id: `${it.id}-facebook`, searchIds: [it.id], name: "Facebook Marketplace", access: "Manual (Chrome routine / share)",
-      method: "Claude in Chrome reads these saved searches and sends results to /api/intake", links: [...(it.wide || []).map(q => fbShip(q, it.max)), ...it.queries.slice(0, 4).map(q => fb(q, it.max))],
+      method: "Claude in Chrome reads these saved searches and sends results to /api/intake", links: [...(it.wide || []).map(q => fbShip(q, it.max)), ...(it.fbQueries || it.queries.slice(0, 4)).map(q => fb(q, it.max))],
       notes: "Signed-in only; never crawled from the server. See routines/fb-refresh.md." },
     { id: `${it.id}-shops`, searchIds: [it.id], name: "Curated resale", access: "Manual (links)",
       method: "Saved searches; crawlers to come", links: [
