@@ -71,7 +71,7 @@ const HUBS = ["10023", "02108", "19103", "20001", "05401", "30303", "60601", "75
 // In priority order: the board's tabs follow it.
 const ITEMS = [
   {
-    id: "bed-frame", name: "Bed frame", budget: "$400–$2,000 [confirm]", max: 2500,
+    id: "bed-frame", name: "King bed frame", budget: "$400–$2,000 [confirm]", max: 2500,
     lookingFor: "The Roseland Bed in king (solid cherry or black walnut), used; otherwise a king in solid hardwood with a headboard and the same quiet Shaker lines.",
     criteria: `${QUALITY}
 
@@ -114,7 +114,7 @@ Check: gas cylinder holds height, tilt works, cushions not cracked or flattened,
     features: [{ label: "Living-room worthy", points: 3 }, { label: "Leather", points: 1 }, { label: "Fully adjustable", points: 1 }],
   },
   {
-    id: "sleeper-sofa", name: "Pull-out couch", budget: "$800–$3,000 [confirm]", max: 3500,
+    id: "sleeper-sofa", name: "Sleeper sofa", budget: "$800–$3,000 [confirm]", max: 3500,
     lookingFor: "A deep, sink-in queen sleeper from a designer or quality maker that opens to one continuous real mattress, ideally a no-bar platform; the dream is tobacco / camel / cognac soft leather.",
     criteria: `${QUALITY}
 
@@ -135,7 +135,7 @@ Check: mechanism opens and closes smoothly, mattress included and clean, frame d
   {
     // Provisional: the Mac's marketplace search sends its own criteria for
     // this search (searches/<rug>/criteria.md); replace this with that text.
-    id: "apartment-rug", name: "Rug", budget: "$200–$1,500 [confirm]", max: 2000, category: "hsa",
+    id: "apartment-rug", name: "Rugs", budget: "$200–$1,500 [confirm]", max: 2000, category: "hsa",
     lookingFor: "A beautiful, well-made rug for the apartment: natural fibers, character, the right size for the room.",
     criteria: `${QUALITY}
 

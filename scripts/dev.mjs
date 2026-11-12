@@ -38,6 +38,8 @@ createServer(async (req, res) => {
     let path = normalize(join(APP, decodeURIComponent(url.pathname)));
     if (!path.startsWith(APP)) { res.writeHead(403).end(); return; }
     if ((await stat(path).catch(() => null))?.isDirectory()) path = join(path, "index.html");
+    // App addresses (/sleeper-sofa) serve the app, like vercel.json's rewrite.
+    else if (!extname(path) && !(await stat(path).catch(() => null))) path = join(APP, "index.html");
     res.writeHead(200, { "content-type": TYPES[extname(path)] || "application/octet-stream" }).end(await readFile(path));
   } catch (e) {
     if (e.code === "ENOENT") { res.writeHead(404).end("Not found"); return; }
